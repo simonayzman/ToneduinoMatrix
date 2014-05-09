@@ -1,6 +1,16 @@
-#include <Adafruit_STMPE610.h>
-#include <Adafruit_GFX.h> 
-#include <RGBmatrixPanel.h>
+/**********************************************/
+/*** Original idea for the Toneduino Matrix ***/
+/***    comes from the following source:    ***/
+/***    http://tonematrix.audiotool.com/    ***/
+/**********************************************/
+
+/**************************/
+/*** LIBRARIES INCLUDED ***/
+/**************************/
+
+#include <Adafruit_STMPE610.h>    // Source: https://github.com/adafruit/Adafruit_STMPE610
+#include <Adafruit_GFX.h>         // Source: https://github.com/adafruit/Adafruit-GFX-Library
+#include <RGBmatrixPanel.h>       // Source: https://github.com/adafruit/RGB-matrix-Panel
 #include <Tone.h>
 #include <Wire.h>
 #include <SPI.h>
