@@ -55,24 +55,23 @@ uint16_t currentColorsOfTonesInColumns[COLUMNS];    // Stores the color of the a
 #define TONE_PIN          5
 #define NOTE_LENGTH_PIN   A15      // Analog pin that will be used as input for the user's desired note length
 
-#define SLOWEST_NOTE_LENGTH   400
+#define SLOWEST_NOTE_LENGTH   300
 #define FASTEST_NOTE_LENGTH   50
 
 int currentNoteLength;            
 
-const int tones[ROWS] = {NOTE_G4,NOTE_GS4,NOTE_A4,NOTE_AS4,NOTE_B4,NOTE_C5,NOTE_CS5,NOTE_D5,NOTE_DS5,NOTE_E5,NOTE_F5,NOTE_FS5,NOTE_G5,NOTE_GS5,NOTE_A5,NOTE_AS5};
+const int tones[ROWS] = {NOTE_AS5,NOTE_A5,NOTE_GS5,NOTE_G5,NOTE_FS5,NOTE_F5,NOTE_E5,NOTE_DS5,NOTE_D5,NOTE_CS5,NOTE_C5,NOTE_B4,NOTE_AS4,NOTE_A4,NOTE_GS4,NOTE_G4};
 //const int tones[ROWS] = {NOTE_C7,NOTE_A6,NOTE_G6,NOTE_F6,NOTE_D6,NOTE_C6,NOTE_A5,NOTE_G5,NOTE_F5,NOTE_D5,NOTE_C5,NOTE_A4,NOTE_G4,NOTE_F4,NOTE_D4,NOTE_C4,};
 
 /*** Debounce values ***/
-#define TOUCH_SCREEN_DELAY                      650 
-#define PAUSE_PLAY_BUTTON_LAST_PRESSED_DELAY    500
-#define RESET_BUTTON_LAST_PRESSED_DELAY         500
+#define TOUCH_SCREEN_DELAY                      200 
+#define PAUSE_PLAY_BUTTON_LAST_PRESSED_DELAY    300
+#define RESET_BUTTON_LAST_PRESSED_DELAY         300
 
-int lastTouchedScreenTime = -TOUCH_SCREEN_DELAY;
-int lastPausePlayTouchTime = -PAUSE_PLAY_BUTTON_LAST_PRESSED_DELAY;
-int lastResetTouchTime = -RESET_BUTTON_LAST_PRESSED_DELAY;
-
-/*** Volatile data instance ***/
+/*** Volatile data instances ***/
+volatile unsigned long lastTouchedScreenTime = 0;
+volatile unsigned long lastPausePlayTouchTime = 0;
+volatile unsigned long lastResetTouchTime = 0;
 volatile boolean isPlaying = true;
 
 /*** Interrupt definitions ***/
@@ -115,7 +114,6 @@ void setup()
   Serial.println("");
   if (!touch.begin()) Serial.print("STMPE not found!");
   else Serial.print("Waiting for touch sense");
-  touch.writeRegister8(STMPE_INT_STA, 0xFF);     // initial reset of touch screen values
 
   /*** Logical Tone Boards Initialization ***/
   for(int currCol = 0; currCol < COLUMNS; ++currCol) 
@@ -145,9 +143,9 @@ void loop()
   {
     Serial.println("");
     Serial.print("* Column "); 
-    Serial.print(currCol+1); 
+    Serial.print(currCol); 
     Serial.print(" *"); 
-
+    
     // Synchronization occurs once per column during normal playing conditions
     // Synchronizes action made on the touch screen with the LED matrix
     // Synchronizes any changes to the duration of a single note
@@ -155,10 +153,10 @@ void loop()
     resolveNoteLengthChanges();
     
     // This loops infinitely when the system is paused as per the user's request
-    // Convenient because it implicitly knows where it stopped last
+    // Convenient because the program then implicitly knows where it stopped last
     while(!isPlaying) 
     {
-      // As above, synchronization is required, even when paused    
+      // As indicated above, synchronization is required, even when paused    
       synchronizeLEDMatrixWithTouchScreenInput();
       resolveNoteLengthChanges();
     }
@@ -168,7 +166,7 @@ void loop()
     int activeNoteInColumn = activeTonesInColumns[currCol];
     if (activeNoteInColumn !=  NO_TONE_SELECTED)
     {
-      pulseLEDFromactiveTonesBoardPosition(activeNoteInColumn,currCol);
+      pulseLEDFromActiveTonesBoardPosition(activeNoteInColumn,currCol);
       playNote(tones[activeNoteInColumn], currentNoteLength);
     }
 
@@ -178,96 +176,96 @@ void loop()
       delay(currentNoteLength);
     }
 
-    // This extra delay makes a satisfying pause between 
-    // each note, making it clear that each is distinct
+    // This extra delay makes a satisfying pause between
+    // each note, making it clear that each one is distinct
     delay(currentNoteLength/8);
   }
 }
 
 void synchronizeLEDMatrixWithTouchScreenInput()
 {
-  int activateCurrentRow = -1;
-  int activateCurrentColumn = -1;
-
   // Checks if the screen is being touched and if enough time has passed
   // since the last synchronization step in order to do this one
-  if (((millis() - lastTouchedScreenTime) > TOUCH_SCREEN_DELAY) && checkIfTouchScreenNoteHasBeenSelected(activateCurrentRow,activateCurrentColumn))
-  {
-    int isNoteInPositionActive = activeTonesBoard[activateCurrentRow][activateCurrentColumn];
-    int activeRowInCurrentColumn = activeTonesInColumns[activateCurrentColumn];
-    // If this position is already on (and must be turned off)
-    if (isNoteInPositionActive == ACTIVE_TONE)
-    {
-      Serial.println("");
-      Serial.print("Turning off coordinate (");
-      Serial.print(activateCurrentRow);
-      Serial.print(",");
-      Serial.print(activateCurrentColumn);
-      Serial.print(").");
-      turnOffPositionInactiveTonesBoard(activateCurrentRow,activateCurrentColumn);
-      turnOffLEDFromactiveTonesBoardPosition(activateCurrentRow,activateCurrentColumn);
-    }
-    // If this position is off, and there's another one active in this column
-    else if(activeRowInCurrentColumn != NO_TONE_SELECTED)
-    {
-      Serial.println("");
-      Serial.print("Changing active coordinate from (");
-      Serial.print(activeRowInCurrentColumn);
-      Serial.print(",");
-      Serial.print(activateCurrentColumn);
-      Serial.print(") to (");
-      Serial.print(activateCurrentRow);
-      Serial.print(",");
-      Serial.print(activateCurrentColumn);
-      Serial.print(").");
-      turnOffPositionInactiveTonesBoard(activeRowInCurrentColumn,activateCurrentColumn);
-      turnOffLEDFromactiveTonesBoardPosition(activeRowInCurrentColumn,activateCurrentColumn);
-      turnOnPositionInactiveTonesBoard(activateCurrentRow,activateCurrentColumn);
-      turnOnLEDFromactiveTonesBoardPosition(activateCurrentRow,activateCurrentColumn);
-    }
-    // If this position is off, and there are no other active positions in this column
-    else
-    {
-      Serial.println("");
-      Serial.print("Turning on coordinate (");
-      Serial.print(activateCurrentRow);
-      Serial.print(",");
-      Serial.print(activateCurrentColumn);
-      Serial.print(").");
-      turnOnPositionInactiveTonesBoard(activateCurrentRow,activateCurrentColumn);
-      turnOnLEDFromactiveTonesBoardPosition(activateCurrentRow,activateCurrentColumn);
-    }
-    lastTouchedScreenTime = millis();
-  }
-}
-
-/*** Touch Screen Functions ***/
-
-bool checkIfTouchScreenNoteHasBeenSelected(int &activateCurrentRow, int &activateCurrentColumn)
-{
-  bool isTouched = false;
-
-  if (touch.touched()) 
+  // 
+  // ****HOWEVER****
+  //
+  // In reality, these checks are somewhat moot when the user wants a slower rhythm because 
+  // the touch will only be registered by the Arduino when the system is not being delay()-ed
+  //
+  // Therefore, there will sometimes seem to be a lag between a user's touch 
+  // and the eventual synchronization with the LED matrix (if at all, in fact)
+  //
+  // What actually happens then is that when the user decided note length (x 1.125, because there 
+  // is also the between note delay) is less than TOUCH_SCREEN_DELAY, the user's touch will be 
+  // registered after TOUCH_SCREEN_DELAY milliseconds, but if the note length x 1.125 is bigger, 
+  // then it will be registered in note length x 1.125 milliseconds
+  if ((millis() - lastTouchedScreenTime) > TOUCH_SCREEN_DELAY && touch.touched())
   {
     uint16_t x, y;
     uint8_t z;
-
-    // Reads in data until it is consistent
-    while (!touch.bufferEmpty()) 
+    while (!touch.bufferEmpty())
       touch.readData(&x, &y, &z);
-
-    // Constraints in place to fit average
-    // outer bounds of touch screen 
-    constrain(x,200,4000);
-    constrain(y,400,3700);
-    activateCurrentColumn = map(x,200,4000,0,15);
-    activateCurrentRow = map(y,400,3700,0,15);
-
-    isTouched = true;
+    
+    // Sometimes, the touch screen reads an incredibly high value outside of its
+    // possible pixel range (something like ~58,000), so this is one last safeguard
+    // that prevents an incorrect update to the logical and LED matrices
+    if (x < 4100 && y < 4100)
+    {
+      // Constraints in place to fit average outer bounds of touch screen
+      // Values were found by trial and error, rather than actual calculation
+      // Touch screen data values are not consistently precise enough  
+      int activateCurrentColumn = constrain(map(x,175,4000,0,16),0,15);
+      int activateCurrentRow = constrain(map(y,350,3700,0,15),0,15);
+      
+      // Relevant information from logical boards is collected
+      int isNoteInPositionActive = activeTonesBoard[activateCurrentRow][activateCurrentColumn];
+      int activeRowInCurrentColumn = activeTonesInColumns[activateCurrentColumn];
+      
+      // If this position is already on (and must be turned off)
+      if (isNoteInPositionActive == ACTIVE_TONE)
+      {
+        Serial.println("");
+        Serial.print("Turning off coordinate (");
+        Serial.print(activateCurrentRow);
+        Serial.print(",");
+        Serial.print(activateCurrentColumn);
+        Serial.print(").");
+        turnOffPositionInActiveTonesBoard(activateCurrentRow,activateCurrentColumn);
+        turnOffLEDFromActiveTonesBoardPosition(activateCurrentRow,activateCurrentColumn);
+      }
+      // If this position is off, and there's another one active in this column
+      else if(activeRowInCurrentColumn != NO_TONE_SELECTED)
+      {
+        Serial.println("");
+        Serial.print("Changing active coordinate from (");
+        Serial.print(activeRowInCurrentColumn);
+        Serial.print(",");
+        Serial.print(activateCurrentColumn);
+        Serial.print(") to (");
+        Serial.print(activateCurrentRow);
+        Serial.print(",");
+        Serial.print(activateCurrentColumn);
+        Serial.print(").");
+        turnOffPositionInActiveTonesBoard(activeRowInCurrentColumn,activateCurrentColumn);
+        turnOffLEDFromActiveTonesBoardPosition(activeRowInCurrentColumn,activateCurrentColumn);
+        turnOnPositionInActiveTonesBoard(activateCurrentRow,activateCurrentColumn);
+        turnOnLEDFromActiveTonesBoardPosition(activateCurrentRow,activateCurrentColumn);
+      }
+      // If this position is off, and there are no other active positions in this column
+      else
+      {
+        Serial.println("");
+        Serial.print("Turning on coordinate (");
+        Serial.print(activateCurrentRow);
+        Serial.print(",");
+        Serial.print(activateCurrentColumn);
+        Serial.print(").");
+        turnOnPositionInActiveTonesBoard(activateCurrentRow,activateCurrentColumn);
+        turnOnLEDFromActiveTonesBoardPosition(activateCurrentRow,activateCurrentColumn);
+      }
+      lastTouchedScreenTime = millis();
+    }
   }
-  touch.writeRegister8(STMPE_INT_STA, 0xFF); // reset all ints
-
-  return isTouched;
 }
 
 /*** Music Function ***/
@@ -281,29 +279,29 @@ void playNote(int frequency, int duration)
 
 /*** Logical Tone Boards Functions ***/
 
-void turnOnPositionInactiveTonesBoard(int row, int column) 
+void turnOnPositionInActiveTonesBoard(int row, int column) 
 { 
   activeTonesBoard[row][column] = ACTIVE_TONE;
   activeTonesInColumns[column] = row;
   currentColorsOfTonesInColumns[column] = WHITE;
 }
 
-void turnOffPositionInactiveTonesBoard(int row, int column) 
+void turnOffPositionInActiveTonesBoard(int row, int column) 
 { 
   activeTonesBoard[row][column] = INACTIVE_TONE; 
   activeTonesInColumns[column] = NO_TONE_SELECTED;
   currentColorsOfTonesInColumns[column] = BLACK;
 }
 
-void togglePositionInactiveTonesBoard(int row, int column) 
+void togglePositionInActiveTonesBoard(int row, int column) 
 { 
   if (activeTonesBoard[row][column] == ACTIVE_TONE)
-    turnOffPositionInactiveTonesBoard(row,column);
+    turnOffPositionInActiveTonesBoard(row,column);
   else 
-    turnOnPositionInactiveTonesBoard(row,column);
+    turnOnPositionInActiveTonesBoard(row,column);
 }
 
-void clearactiveTonesBoard()
+void clearActiveTonesBoard()
 { 
   for(int currCol = 0; currCol < COLUMNS; ++currCol) 
   {
@@ -314,7 +312,7 @@ void clearactiveTonesBoard()
   } 
 }
 
-void printactiveTonesBoard()
+void printActiveTonesBoard()
 { 
   Serial.println("");
   for(int currRow = 0; currRow < ROWS; ++currRow) 
@@ -335,19 +333,19 @@ void drawTwoByTwoClusteredPixelsWithColor(int x, int y, uint16_t color)
   matrix.drawPixel(x+1,y+1,color);
 }
 
-void turnOnLEDFromactiveTonesBoardPosition(int row, int column)
+void turnOnLEDFromActiveTonesBoardPosition(int row, int column)
 {
   // The multiplication by two adjusts for the 16x16 to 32x32 adaptation
   drawTwoByTwoClusteredPixelsWithColor(column*2,row*2,WHITE);
 }
 
-void turnOffLEDFromactiveTonesBoardPosition(int row, int column)
+void turnOffLEDFromActiveTonesBoardPosition(int row, int column)
 {
   // The multiplication by two adjusts for the 16x16 to 32x32 adaptation
   drawTwoByTwoClusteredPixelsWithColor(column*2,row*2,BLACK);
 }
 
-void pulseLEDFromactiveTonesBoardPosition(int row, int column)
+void pulseLEDFromActiveTonesBoardPosition(int row, int column)
 {
   uint16_t currentColor = currentColorsOfTonesInColumns[column];
   
@@ -389,6 +387,8 @@ void pulseLEDFromactiveTonesBoardPosition(int row, int column)
     uint16_t otherColors[6] = {RED, GREEN, BLUE, ORANGE, PURPLE, WHITE};
     randomOtherColor = otherColors[random(0,6)];
   }
+  currentColorsOfTonesInColumns[column] = randomOtherColor;
+  
   // The multiplication by two adjusts for the 16x16 to 32x32 adaptation
   drawTwoByTwoClusteredPixelsWithColor(column*2,row*2,randomOtherColor);
 }
@@ -411,10 +411,11 @@ void clearAllBoards()
 { 
   if ((millis() - lastResetTouchTime) > RESET_BUTTON_LAST_PRESSED_DELAY)
   {
-    clearactiveTonesBoard(); 
+    clearActiveTonesBoard(); 
     clearLEDMatrix();
     Serial.println("");
     Serial.print("ToneMatrix has been cleared."); 
+    lastResetTouchTime = millis();
   }
 }
 
