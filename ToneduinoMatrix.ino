@@ -215,7 +215,7 @@ void synchronizeLEDMatrixWithTouchScreenInput()
       // Values were found by trial and error, rather than actual calculation
       // Touch screen data values are not consistently precise enough  
       int activateCurrentColumn = constrain(map(x,175,4000,0,16),0,15);
-      int activateCurrentRow = constrain(map(y,350,3700,0,15),0,15);
+      int activateCurrentRow = constrain(map(y,325,3650,0,16),0,15);
       
       // Relevant information from logical boards is collected
       int isNoteInPositionActive = activeTonesBoard[activateCurrentRow][activateCurrentColumn];
