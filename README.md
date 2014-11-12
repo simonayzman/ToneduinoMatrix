@@ -15,71 +15,72 @@ Note that there is one last major design difference—this project resembles the
 <h3>Parts List</h3>
 
 <b>Arduino MEGA 2560 R3</b><br>
+The Arduino that will do the calculation and synchonrization.<br>
 http://www.amazon.com/gp/product/B006H0DWZW/ref=oh_details_o06_s00_i00?ie=UTF8&psc=1
-The Arduino that will do the calculation and synchonrization
 
 <b>32x32 RGB LED Matrix Panel</b><br>
+The visible screen that shows the currently activated squares.<br>
 https://www.adafruit.com/product/1484
-The visible screen that shows the currently activated squares.
 
 <b>Resistive Touchscreen Overlay</b><br>
-https://www.adafruit.com/product/1676
 Touchscreen that the user will use to activate and deactivate squares in the matrix.
+https://www.adafruit.com/product/1676
 
-<b>Resistive Touch Screen Controller - STMPE610</b><br>
+<b>Resistive Touch Screen Controller - <br>STMPE610</b><br>
+Controller that interfaces between the Arduino and the touchscreen<br>
 https://www.adafruit.com/product/1571
-dasf
+
 
 <b>12VDC 20A Two Position ON/OFF Toggle Switch</b><br>
+Turns the entire program on and off.<br>
 http://www.amazon.com/gp/product/B009IS86ZG/ref=oh_details_o03_s00_i01?ie=UTF8&psc=1
-Turns the entire program on and off.
 
 <b>5V 3A Switching AC Adapter Power Supply</b><br>
+Used to simultaneously power the Arduino and the LED Matrix.<br>
 http://www.ebay.com/itm/300637535405?ssPageName=STRK:MEWNX:IT&_trksid=p3984.m1497.l2649
-Used to simultaneously power the Arduino and the LED Matrix.
 
 <b>Power Adaptor DC Splitter 1 Female to 2 Male Cable</b><br>
-<b>http://www.ebay.com/itm/261463291739?ssPageName=STRK:MEWNX:IT&_trksid=p3984.m1497.l2649
-Splits the power from the adapter; one end goes to the Arduino and the other to the LED Matrix.
+Splits the power from the adapter; one end goes to the Arduino and the other to the LED Matrix.<br>
+http://www.ebay.com/itm/261463291739?ssPageName=STRK:MEWNX:IT&_trksid=p3984.m1497.l2649
 
 <b>2.1mm DC barrel jack</b><br>
+Required for the connection between the adapter and the LED Matrix.<br>
 https://www.adafruit.com/products/610
-Required for the connection between the adapter and the LED Matrix.
 
 <b>30mm Arcade Button (x2)</b><br>
-https://www.adafruit.com/products/471
-One button is used for pausing/playing and the other is used to clear the screen.
+One button is used for pausing/playing and the other is used to clear the screen.<br>
+https://www.adafruit.com/products/471<br>
 
 <b>8 Ohm .5 W Speakers (x2) with Stereo Headphone Plug</b><br>
-Source was a previous music player that came with a headphone plug attached.
-Plays the notes as per the direction of the Arduino.
+Source was a previous music player that came with a headphone plug attached. Plays the notes as per the direction of the Arduino.<br>
 
 <b>3.5mm Stereo Headphone Jack</b><br>
+Connects the speaker to the arduino.<br>
 https://www.adafruit.com/products/1699
-Connects the speaker to the arduino
+
 
 <b>10K Ohm Rotary Linear Potentiometers (x2)</b><br>
+One is used for volume control and the other is for speed controller.<br>
 http://www.amazon.com/gp/product/B00AH8DN4A/ref=oh_details_o03_s01_i00?ie=UTF8&psc=1
-One is used for volume control and the other is for speed controller.
 
 <b>Potentiometer Knob Caps (x 2)</b><br>
+Used for aesthetic reasons.<br>
 http://www.amazon.com/gp/product/B008DFA6YE/ref=oh_details_o03_s02_i00?ie=UTF8&psc=1
-Used for aesthetic reasons.
 
 <b>10K Ω resistor (x4)</b><br>
 
 <h2>Libraries Used</h2>
 
 <b>Adafruit_STMPE610.h</b><br>
-Adafruit native library used to interface the STMPE610 Touch Screen Controller.
+Adafruit native library used to interface the STMPE610 Touch Screen Controller.<br>
 https://github.com/adafruit/Adafruit_STMPE610
 
 <b>RGBmatrixPanel.h</b><br>
-Native library used to operate LED Matrices. Supports the 16x32 and 32x32 designs.
+Native library used to operate LED Matrices. Supports the 16x32 and 32x32 designs.<br>
 https://github.com/adafruit/RGB-matrix-Panel
 
 <b>Adafruit_GFX.h</b><br>
-Adafruit native graphics library necessary for the RGBmatrixPanel library to function.
+Adafruit native graphics library necessary for the RGBmatrixPanel library to function.<br>
 https://github.com/adafruit/Adafruit-GFX-Library
 
 <h3>Assembly Instructions</h3>
