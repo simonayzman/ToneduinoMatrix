@@ -26,7 +26,7 @@ https://www.adafruit.com/product/1484
 Touchscreen that the user will use to activate and deactivate squares in the matrix.
 https://www.adafruit.com/product/1676
 
-<b>Resistive Touch Screen Controller - <br>STMPE610</b><br>
+<b>Resistive Touch Screen Controller - STMPE610</b><br>
 Controller that interfaces between the Arduino and the touchscreen<br>
 https://www.adafruit.com/product/1571
 
