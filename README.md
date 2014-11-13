@@ -8,24 +8,24 @@ You can find the presentation videos in this repository, or on Youtube at the fo
 
 <h3>Description</h3>
 
-Conceptually, the Tone Matrix is a grid of musical squares. Usually, the matrix itself is square, but it doesn’t necessarily have to be; it could be rectangular. All the squares in any single row represent the same note. For example, all the squares in the first row can represent a C (2093 Hz) note. Moreover, each individual square in a column represents a unique note. For example, if a column has four squares, they might (from top to bottom) represent a C (2093 Hz) followed by an A (1760 Hz) followed by a G (1568 Hz) followed by an F (1394 Hz). As in the example, the notes do not necessarily have to be tonally sequential. With this configuration of rows and columns, the purpose of the tone matrix is to continuously loop through a sequence of notes that the user “activates.” Any square in the matrix can be activated. Starting at the first column, the looping mechanism plays the active note(s) in that column for a set amount of time, moves on to the column in the immediate right, and repeats the process. If the program reaches the last column, it simply loops back to the leftmost column. It is therefore easiest to think of the columns as representing time; columns that are more left will play notes earlier than the columns that are more right. This is essentially the way the tone matrix works. 
+Conceptually, the Tone Matrix is a grid of musical squares. Usually, the matrix itself is square, but it doesn’t necessarily have to be; it could be rectangular. All the squares in any single row represent the same note. For example, all the squares in the first row can represent a C (2093 Hz) note. Moreover, each individual square in a column represents a unique note. For example, if a column has four squares, they might (from top to bottom) represent a C (2093 Hz) followed by an A (1760 Hz) followed by a G (1568 Hz) followed by an F (1394 Hz). As in the example, the notes do not necessarily have to be tonally sequential. With this configuration of rows and columns, the purpose of the tone matrix is to continuously loop through a sequence of notes that the user “activates.” Any square in the matrix can be activated. Starting at the first column, the looping mechanism plays the active note(s) in that column for a set amount of time, moves on to the column in the immediate right, and repeats the process. If the program reaches the last column, it simply loops back to the leftmost column. It is therefore easiest to think of the columns as representing time; columns that are more left will play notes earlier than the columns that are more right. 
 
-A few adjustments and improvements were made with my Arduino adaptation. (1) The user can pause and play the program. (2) The user can automatically clear the screen of active notes. (3) The user can adjust the volume. (4) The user can adjust the speed at which the program runs. (5) The Toneduino Matrix can only support playing a single note per column. (6) A physical 32x32 matrix will be used, but it will function as a 16x16 matrix (each “square” is 2x2). The reasons for adjustments (1), (2), and (3) are simply that they provide extra conveniences to the user that were not present in the original Tone Matrix. Adjustment (4) adds a new dimension by supporting different rhythms, allowing for a larger variety of sequences that can be either fast or slow. Adjustment (5), on the other hand, detracts from the original. With the current Tone library, the Arduino cannot handle more than two notes simultaneously, even if there are more than two timers available (such as on a Mega). For purposes of simplicity, this adaptation chooses not to take the option of even playing two notes per column and instead stays with one. Adjustment (6) was decided for aesthetic reasons and for user visibility, but the general availability of parts on the market was also a factor.
+A few adjustments and improvements were made with my Arduino adaptation. (1) The user can pause and play the program. (2) The user can automatically clear the screen of active notes. (3) The user can adjust the volume. (4) The user can adjust the speed at which the program runs. (5) The Toneduino Matrix can only support playing a single note per column. (6) A physical 32x32 matrix will be used, but it will function as a 16x16 matrix (each “square” is 2x2). The reason for adjustments (1), (2), and (3) is simply that they provide extra conveniences to the user that were not present in the original Tone Matrix. Adjustment (4) adds a new dimension by supporting different rhythms, allowing for a larger variety of sequences that can be either fast or slow. Adjustment (5), on the other hand, detracts from the original. With the current Tone library, the Arduino cannot handle more than two notes simultaneously, even if there are more than two timers available (such as on a Mega). For purposes of simplicity, this adaptation chooses not to take the option of even playing two notes per column and instead stays with one. Adjustment (6) was decided for aesthetic reasons and for user visibility, but the general availability of parts on the market was also a factor.
 
 Note that there is one last major design difference--this project resembles the function of a laptop. The actual touch activation of a square is separate from where that active square appears; a touch screen registers a touch (where the keyboard would be) and the LED Matrix reflects this change (where the screen would be). If the touch screen were the same size as the LED Matrix, this would be less of an issue; it could simply serve as an overlay on top of it, thereby saving space. However, in this version, this was not the design choice made.
 
 <h3>Parts List</h3>
 
 <b>Arduino MEGA 2560 R3</b><br>
-The Arduino that will do the calculation and synchonrization.<br>
+The Arduino that will do the calculation and synchonrization<br>
 http://www.amazon.com/gp/product/B006H0DWZW/ref=oh_details_o06_s00_i00?ie=UTF8&psc=1
 
 <b>32x32 RGB LED Matrix Panel</b><br>
-The visible screen that shows the currently activated squares.<br>
+The visible screen that shows the currently activated squares<br>
 https://www.adafruit.com/product/1484
 
 <b>Resistive Touchscreen Overlay</b><br>
-Touchscreen that the user will use to activate and deactivate squares in the matrix.
+Touchscreen that the user will use to activate and deactivate squares in the matrix<br>
 https://www.adafruit.com/product/1676
 
 <b>Resistive Touch Screen Controller - STMPE610</b><br>
@@ -34,39 +34,39 @@ https://www.adafruit.com/product/1571
 
 
 <b>12VDC 20A Two Position ON/OFF Toggle Switch</b><br>
-Turns the entire program on and off.<br>
+Turns the entire program on and off<br>
 http://www.amazon.com/gp/product/B009IS86ZG/ref=oh_details_o03_s00_i01?ie=UTF8&psc=1
 
 <b>5V 3A Switching AC Adapter Power Supply</b><br>
-Used to simultaneously power the Arduino and the LED Matrix.<br>
+Used to simultaneously power the Arduino and the LED Matrix<br>
 http://www.ebay.com/itm/300637535405?ssPageName=STRK:MEWNX:IT&_trksid=p3984.m1497.l2649
 
 <b>Power Adaptor DC Splitter 1 Female to 2 Male Cable</b><br>
-Splits the power from the adapter; one end goes to the Arduino and the other to the LED Matrix.<br>
+Splits the power from the adapter; one end goes to the Arduino and the other to the LED Matrix<br>
 http://www.ebay.com/itm/261463291739?ssPageName=STRK:MEWNX:IT&_trksid=p3984.m1497.l2649
 
 <b>2.1mm DC barrel jack</b><br>
-Required for the connection between the adapter and the LED Matrix.<br>
+Required for the connection between the adapter and the LED Matrix<br>
 https://www.adafruit.com/products/610
 
 <b>30mm Arcade Button (x2)</b><br>
-One button is used for pausing/playing and the other is used to clear the screen.<br>
+One used for pausing/playing and the other for clearing the screen<br>
 https://www.adafruit.com/products/471<br>
 
 <b>8 Ohm .5 W Speakers (x2) with Stereo Headphone Plug</b><br>
-Source was a previous music player that came with a headphone plug attached. Plays the notes as per the direction of the Arduino.<br>
+Plays notes based on directions from the Arduino<br>
 
 <b>3.5mm Stereo Headphone Jack</b><br>
-Connects the speaker to the arduino.<br>
+Connects the speaker to the Arduino<br>
 https://www.adafruit.com/products/1699
 
 
 <b>10K Ohm Rotary Linear Potentiometers (x2)</b><br>
-One is used for volume control and the other is for speed controller.<br>
+One for volume control and the other for speed control<br>
 http://www.amazon.com/gp/product/B00AH8DN4A/ref=oh_details_o03_s01_i00?ie=UTF8&psc=1
 
 <b>Potentiometer Knob Caps (x 2)</b><br>
-Used for aesthetic reasons.<br>
+Used for aesthetic reasons<br>
 http://www.amazon.com/gp/product/B008DFA6YE/ref=oh_details_o03_s02_i00?ie=UTF8&psc=1
 
 <b>10K Ω resistor (x4)</b><br>
