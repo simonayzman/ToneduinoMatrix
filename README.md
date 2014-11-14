@@ -4,7 +4,7 @@ Arduino based adaptation of the popular Tone Matrix.
 
 Here is the source of inspiration: http://tonematrix.audiotool.com/
 
-You can find the presentation videos in this repository, or on Youtube at the following playlist: https://www.youtube.com/watch?v=R4dyouORJGk&list=PLjIR0u8ThmEV0xYDmoMsaXHUVaA8kzDyI&index=4
+You can find the presentation videos in this repository, or on Youtube at the following playlist: https://www.youtube.com/watch?v=R4dyouORJGk&list=PLjIR0u8ThmEV0xYDmoMsaXHUVaA8kzDyI
 
 <h3>Description</h3>
 
